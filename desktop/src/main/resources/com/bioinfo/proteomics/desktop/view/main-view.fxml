@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Main window: menu bar, one tab per tool (each in its own FXML file), status bar and footer.
+
+  Texts are message keys of i18n/messages_<lang>.properties, translated (and re-translated when
+  the language changes) by ViewTranslator. Values that are not keys, such as "m/z" or "b", are
+  displayed as written.
+-->
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="root" styleClass="app-root"
+            fx:controller="com.bioinfo.proteomics.desktop.controller.MainController">
+
+    <top>
+        <MenuBar fx:id="menuBar">
+            <Menu text="menu.file">
+                <MenuItem text="menu.file.open" accelerator="Shortcut+O"
+                          onAction="#onOpenSpectra"/>
+                <MenuItem fx:id="openSamplesItem" text="menu.file.openSamples"
+                          onAction="#onOpenSamplesFolder"/>
+                <SeparatorMenuItem/>
+                <MenuItem text="menu.file.quit" accelerator="Shortcut+Q" onAction="#onQuit"/>
+            </Menu>
+            <Menu text="menu.options">
+                <Menu fx:id="languageMenu" text="menu.options.language"/>
+                <Menu fx:id="textSizeMenu" text="menu.options.textSize"/>
+            </Menu>
+            <Menu text="menu.help">
+                <MenuItem text="menu.help.guide" accelerator="F1" onAction="#onHelp"/>
+                <MenuItem text="menu.help.shortcuts" onAction="#onShortcuts"/>
+                <SeparatorMenuItem/>
+                <MenuItem text="menu.help.uniprot" onAction="#onOpenUniProtSite"/>
+                <MenuItem text="menu.help.pride" onAction="#onOpenPrideSite"/>
+                <MenuItem text="menu.help.proforma" onAction="#onOpenProFormaSite"/>
+                <SeparatorMenuItem/>
+                <MenuItem text="menu.help.about" onAction="#onAbout"/>
+            </Menu>
+        </MenuBar>
+    </top>
+
+    <center>
+        <TabPane fx:id="mainTabs" tabClosingPolicy="UNAVAILABLE">
+            <Tab text="tab.peptide">
+                <fx:include fx:id="peptideTab" source="peptide-tab.fxml"/>
+            </Tab>
+            <Tab text="tab.spectra">
+                <fx:include fx:id="spectraTab" source="spectra-tab.fxml"/>
+            </Tab>
+            <Tab text="tab.uniprot">
+                <fx:include fx:id="uniprotTab" source="uniprot-tab.fxml"/>
+            </Tab>
+            <Tab text="tab.pride">
+                <fx:include fx:id="prideTab" source="pride-tab.fxml"/>
+            </Tab>
+        </TabPane>
+    </center>
+
+    <bottom>
+        <VBox>
+            <HBox spacing="8" alignment="CENTER_LEFT" styleClass="status-bar">
+                <ProgressIndicator fx:id="busyIndicator" prefWidth="18" prefHeight="18"/>
+                <Label fx:id="statusLabel"/>
+            </HBox>
+            <fx:include fx:id="footer" source="footer.fxml"/>
+        </VBox>
+    </bottom>
+</BorderPane>

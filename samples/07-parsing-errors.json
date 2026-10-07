@@ -1,0 +1,40 @@
+{
+  "spectra": [
+    {
+      "id": "valid-1",
+      "peptide": "PEPTIDE",
+      "precursor": { "mz": 400.6872, "charge": 2 },
+      "peaks": [[148.0604, 4200], [227.1026, 3100], [263.0874, 5200], [376.1714, 6100], [574.2718, 7300]]
+    },
+    {
+      "id": "negative-precursor",
+      "precursor": { "mz": -5, "charge": 2 },
+      "peaks": [[100.0, 10]]
+    },
+    {
+      "id": "unknown-residue",
+      "peptide": "PEPXIDE",
+      "precursor": { "mz": 400.6872, "charge": 2 },
+      "peaks": [[148.0604, 4200], [263.0874, 5200]]
+    },
+    {
+      "id": "bad-peaks",
+      "precursor": { "mz": 410.2051, "charge": 2 },
+      "peaks": [[175.1190, 3000], [304.1615, -20], ["abc", 10], [417.2456, 4100]]
+    },
+    {
+      "id": "valid-1",
+      "peptide": "PEPTIDE",
+      "peaks": [[148.0604, 4200]]
+    },
+    {
+      "id": "arrays-of-different-length",
+      "mz": [175.1190, 304.1615, 417.2456],
+      "intensity": [3000, 2200]
+    },
+    {
+      "id": "no-peaks",
+      "peptide": "SAMPLER"
+    }
+  ]
+}

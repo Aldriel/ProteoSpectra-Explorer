@@ -1,0 +1,48 @@
+{
+  "spectra": [
+    {
+      "id": "format-objects",
+      "msLevel": 2,
+      "retentionTime": 1520.4,
+      "peptide": "PEPTIDE",
+      "precursor": { "mz": 400.6872, "charge": 2 },
+      "peaks": [
+        { "mz": 98.0600, "intensity": 1500 },
+        { "mz": 148.0604, "intensity": 4200 },
+        { "mz": 227.1026, "intensity": 3100 },
+        { "mz": 263.0874, "intensity": 5200 },
+        { "mz": 324.1554, "intensity": 2600 },
+        { "mz": 376.1714, "intensity": 6100 },
+        { "mz": 425.2030, "intensity": 2400 },
+        { "mz": 477.2191, "intensity": 3900 },
+        { "mz": 538.2871, "intensity": 1800 },
+        { "mz": 574.2718, "intensity": 7300 },
+        { "mz": 653.3141, "intensity": 900 },
+        { "mz": 703.3145, "intensity": 2100 }
+      ]
+    },
+    {
+      "id": "format-parallel-arrays",
+      "msLevel": 2,
+      "peptide": "SAM[Oxidation]PLER",
+      "precursorMz": 410.2051,
+      "precursorCharge": 2,
+      "mz": [175.1190, 304.1615, 417.2456, 514.2984, 661.3338],
+      "intensity": [3000, 2200, 4100, 1500, 900]
+    },
+    {
+      "id": "format-pairs-and-strings",
+      "rt": "1520.4",
+      "sequence": "PEPTIDE",
+      "precursor": { "mz": "400.6872", "charge": "2" },
+      "peaks": [
+        [148.0604, 4200],
+        ["227.1026", "3100"],
+        [263.0874, 5200],
+        [376.1714, 6100],
+        [477.2191, 3900],
+        [574.2718, 7300]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  "PRIDE" tab: project search on the left; details and files of the chosen project on the right.
+  Texts are message keys (see main-view.fxml).
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      spacing="10" styleClass="tab-content"
+      fx:controller="com.bioinfo.proteomics.desktop.controller.PrideTabController">
+
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Label text="pride.search"/>
+        <TextField fx:id="queryField" text="PXD000001" promptText="pride.search.prompt"
+                   prefWidth="360" onAction="#onSearch">
+            <tooltip><Tooltip text="tip.prideSearch"/></tooltip>
+        </TextField>
+        <Button fx:id="prideSearchButton" text="pride.searchButton" styleClass="primary-button"
+                onAction="#onSearch"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="?" styleClass="help-button" onAction="#onHelp">
+            <tooltip><Tooltip text="tip.tabHelp"/></tooltip>
+        </Button>
+    </HBox>
+
+    <SplitPane dividerPositions="0.4" VBox.vgrow="ALWAYS">
+
+        <!-- Search results -->
+        <VBox fx:id="resultsPane" spacing="6" styleClass="pride-pane">
+            <Label fx:id="resultsLabel" styleClass="bold" wrapText="true"/>
+            <TableView fx:id="projectTable" VBox.vgrow="ALWAYS">
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS"/>
+                </columnResizePolicy>
+                <tooltip><Tooltip text="tip.projectTable"/></tooltip>
+                <placeholder><Label fx:id="resultsPlaceholder" wrapText="true"/></placeholder>
+                <columns>
+                    <TableColumn fx:id="projectAccessionColumn" text="pride.column.accession"
+                                 prefWidth="90" minWidth="80"/>
+                    <TableColumn fx:id="projectTitleColumn" text="pride.column.title"
+                                 prefWidth="300"/>
+                    <TableColumn fx:id="projectDateColumn" text="pride.column.published"
+                                 prefWidth="90" minWidth="85"/>
+                </columns>
+            </TableView>
+            <HBox spacing="8" alignment="CENTER">
+                <Button fx:id="previousPageButton" text="pride.previous"
+                        onAction="#onPreviousPage"/>
+                <Label fx:id="pageLabel"/>
+                <Button fx:id="nextPageButton" text="pride.next" onAction="#onNextPage"/>
+            </HBox>
+        </VBox>
+
+        <SplitPane orientation="VERTICAL" dividerPositions="0.5">
+
+            <!-- Details of the project -->
+            <StackPane styleClass="pride-pane">
+                <Label fx:id="projectPlaceholder" text="pride.placeholder" wrapText="true"
+                       styleClass="muted"/>
+                <ScrollPane fx:id="projectSheet" fitToWidth="true" visible="false">
+                    <VBox spacing="8" styleClass="project-sheet">
+                        <Label fx:id="projectTitleLabel" styleClass="project-title"
+                               wrapText="true"/>
+                        <GridPane hgap="12" vgap="4">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="90"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+                            <Label text="pride.doi" styleClass="bold"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <Hyperlink fx:id="doiLink" onAction="#onOpenDoi"
+                                       GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                            <Label text="pride.dates" styleClass="bold"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Label fx:id="datesLabel" wrapText="true"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Label text="pride.organisms" styleClass="bold"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="organismsLabel" wrapText="true"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <Label text="pride.instruments" styleClass="bold"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Label fx:id="instrumentsLabel" wrapText="true"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                            <Label text="pride.keywords" styleClass="bold"
+                                   GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <Label fx:id="keywordsLabel" wrapText="true"
+                                   GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                            <Label text="pride.submitters" styleClass="bold"
+                                   GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                            <Label fx:id="submittersLabel" wrapText="true"
+                                   GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                        </GridPane>
+                        <Hyperlink fx:id="prideLink" text="pride.openWebPage"
+                                   onAction="#onOpenPridePage"/>
+                        <Label fx:id="descriptionLabel" wrapText="true"/>
+                    </VBox>
+                </ScrollPane>
+            </StackPane>
+
+            <!-- Files of the project -->
+            <VBox spacing="6" styleClass="pride-pane">
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label fx:id="filesLabel" styleClass="bold"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <CheckBox fx:id="readableOnlyBox" text="pride.readableOnly">
+                        <tooltip><Tooltip text="tip.readableOnly"/></tooltip>
+                    </CheckBox>
+                </HBox>
+                <TableView fx:id="fileTable" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS"/>
+                    </columnResizePolicy>
+                    <tooltip><Tooltip text="tip.fileTable"/></tooltip>
+                    <placeholder><Label text="pride.noFiles"/></placeholder>
+                    <columns>
+                        <TableColumn fx:id="fileNameColumn" text="pride.column.file"
+                                     prefWidth="420"/>
+                        <TableColumn fx:id="fileCategoryColumn" text="pride.column.category"
+                                     prefWidth="90" minWidth="70"/>
+                        <TableColumn fx:id="fileSizeColumn" text="pride.column.size"
+                                     prefWidth="80" minWidth="70" styleClass="number-column"/>
+                    </columns>
+                </TableView>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Button fx:id="prideDownloadButton" text="pride.download"
+                            styleClass="primary-button" onAction="#onDownload">
+                        <tooltip><Tooltip text="tip.download"/></tooltip>
+                    </Button>
+                    <Button fx:id="prideSaveButton" text="pride.save" onAction="#onSave">
+                        <tooltip><Tooltip text="tip.save"/></tooltip>
+                    </Button>
+                    <ProgressBar fx:id="downloadProgressBar" prefWidth="160"/>
+                    <Button fx:id="cancelButton" text="pride.cancel"
+                            onAction="#onCancelDownload">
+                        <tooltip><Tooltip text="tip.cancelDownload"/></tooltip>
+                    </Button>
+                </HBox>
+                <Label text="pride.fileHint" wrapText="true" styleClass="file-hint"
+                       minHeight="-Infinity"/>
+            </VBox>
+        </SplitPane>
+    </SplitPane>
+</VBox>

@@ -1,0 +1,15 @@
+# Maven build output
+target/
+
+# Web client: dependencies and production build
+web/client/node_modules/
+web/client/dist/
+
+# IDE settings
+.idea/
+*.iml
+.vscode/
+
+# Operating system files
+Thumbs.db
+.DS_Store

@@ -1,0 +1,304 @@
+/*
+ * The text size is set as -fx-font-size on the root of each window (Options > Text size);
+ * every other size is expressed in em so the whole interface scales with it.
+ */
+
+.app-root, .help-root {
+    -fx-font-size: 13px;
+}
+
+.tab-content {
+    -fx-padding: 0.9em;
+}
+
+.summary {
+    -fx-font-family: "Consolas", monospace;
+}
+
+.bold {
+    -fx-font-weight: bold;
+}
+
+.muted {
+    -fx-text-fill: #5f6b76;
+}
+
+.small {
+    -fx-font-size: 0.9em;
+}
+
+.primary-button {
+    -fx-base: #1f6fb2;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.help-button {
+    -fx-font-weight: bold;
+    -fx-background-radius: 1em;
+    -fx-min-width: 2em;
+    -fx-min-height: 2em;
+    -fx-padding: 0;
+}
+
+.status-bar {
+    -fx-padding: 0.3em 0.8em 0.3em 0.8em;
+    -fx-background-color: #eef2f6;
+    -fx-border-color: #c9d3dd transparent transparent transparent;
+}
+
+/* Footer: discreet line below the status bar. */
+.app-footer {
+    -fx-padding: 0.25em 0.8em 0.25em 1.5em;
+    -fx-background-color: #f6f8fa;
+    -fx-border-color: #e1e6eb transparent transparent transparent;
+    -fx-font-size: 1.14em;
+    -fx-spacing: 2em;
+}
+
+/* Everything but the licence, centred in the rest of the footer. */
+.footer-main {
+    -fx-hgap: 3em;
+    -fx-vgap: 0.2em;
+}
+
+.app-footer .label, .app-footer .hyperlink {
+    -fx-text-fill: #5f6b77;
+}
+
+.app-footer .hyperlink {
+    -fx-padding: 0 0.2em 0 0.2em;
+    -fx-border-color: transparent;
+}
+
+.app-footer .hyperlink:hover {
+    -fx-text-fill: #1f6fb2;
+    -fx-underline: true;
+}
+
+.footer-separator {
+    -fx-padding: 0 0.2em 0 0.2em;
+}
+
+.footer-tagline {
+    -fx-font-style: italic;
+}
+
+/* Ko-fi button, in royal blue so that it does not look disabled. */
+.kofi-button {
+    -fx-background-color: #4169e1;
+    -fx-background-radius: 0.5em;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 0.25em 0.8em 0.25em 0.7em;
+    -fx-graphic-text-gap: 0.45em;
+    -fx-cursor: hand;
+}
+
+.kofi-button:hover {
+    -fx-background-color: #2f54c4;
+}
+
+.kofi-button:focused {
+    -fx-background-color: #2f54c4, #4169e1;
+    -fx-background-insets: 0, 2;
+}
+
+.kofi-cup {
+    -fx-fill: white;
+}
+
+.status-bar .label:error, .list-cell:error {
+    -fx-text-fill: #b00020;
+}
+
+/*
+ * Spectrum chart: raw peaks in grey, annotated b ions in blue, y ions in red, reference spectrum
+ * in green.
+ */
+.chart-series-line {
+    -fx-stroke-width: 1px;
+}
+
+.default-color0.chart-series-line { -fx-stroke: #9aa5b1; }
+.default-color1.chart-series-line { -fx-stroke: #1565c0; -fx-stroke-width: 2px; }
+.default-color2.chart-series-line { -fx-stroke: #c62828; -fx-stroke-width: 2px; }
+.default-color3.chart-series-line { -fx-stroke: #2e7d32; -fx-opacity: 0.8; }
+
+.default-color0.chart-legend-item-symbol { -fx-background-color: #9aa5b1; }
+.default-color1.chart-legend-item-symbol { -fx-background-color: #1565c0; }
+.default-color2.chart-legend-item-symbol { -fx-background-color: #c62828; }
+.default-color3.chart-legend-item-symbol { -fx-background-color: #2e7d32; }
+
+/* Range being selected with the mouse to zoom in. */
+.zoom-selection {
+    -fx-fill: rgba(21, 101, 192, 0.12);
+    -fx-stroke: #1565c0;
+    -fx-stroke-dash-array: 4 3;
+}
+
+/* Peak clicked by the user: orange, which differs from the b, y and raw peak colors. */
+.peak-marker {
+    -fx-stroke: #ef6c00;
+    -fx-stroke-width: 3px;
+    -fx-stroke-line-cap: butt;
+}
+
+.peak-info {
+    -fx-text-fill: #37474f;
+}
+
+/* ----- PRIDE tab ----- */
+
+.pride-pane {
+    -fx-padding: 0.4em;
+}
+
+.project-sheet {
+    -fx-padding: 0.3em 0.6em 0.6em 0.3em;
+}
+
+.project-title {
+    -fx-font-size: 1.15em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f4e79;
+}
+
+.number-column {
+    -fx-alignment: CENTER-RIGHT;
+}
+
+/* Files that the application cannot read (RAW, mzML, results…). */
+.table-row-cell:unreadable .text {
+    -fx-fill: #8a949e;
+}
+
+.file-hint {
+    -fx-text-fill: #5f6b76;
+    -fx-font-size: 0.9em;
+}
+
+/* ----- User guide window ----- */
+
+.help-search-bar {
+    -fx-padding: 0.6em 0.8em 0.6em 0.8em;
+    -fx-background-color: #eef2f6;
+    -fx-border-color: transparent transparent #c9d3dd transparent;
+}
+
+.help-content {
+    -fx-background-color: white;
+}
+
+.help-content > .viewport {
+    -fx-background-color: white;
+}
+
+.help-section {
+    -fx-padding: 1.2em 1.6em 2em 1.6em;
+    -fx-spacing: 0.7em;
+    -fx-background-color: white;
+}
+
+.help-title {
+    -fx-font-size: 1.7em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f4e79;
+}
+
+.help-title .help-text {
+    -fx-fill: #1f4e79;
+}
+
+.help-h2 {
+    -fx-padding: 0.8em 0 0 0;
+}
+
+.help-h2 .help-text, .help-h2 .help-highlight {
+    -fx-font-size: 1.3em;
+    -fx-font-weight: bold;
+    -fx-fill: #1f4e79;
+}
+
+.help-h3 .help-text, .help-h3 .help-highlight {
+    -fx-font-size: 1.1em;
+    -fx-font-weight: bold;
+}
+
+.help-text {
+    -fx-fill: #1d2329;
+}
+
+.help-bold {
+    -fx-font-weight: bold;
+}
+
+.help-italic {
+    -fx-font-style: italic;
+}
+
+.help-code {
+    -fx-font-family: "Consolas", monospace;
+}
+
+.text.help-code {
+    -fx-fill: #8a1538;
+}
+
+.help-highlight {
+    -fx-background-color: #ffe066;
+    -fx-background-radius: 0.2em;
+    -fx-padding: 0;
+}
+
+TextArea.help-code {
+    -fx-control-inner-background: #f4f6f8;
+    -fx-focus-color: transparent;
+}
+
+TextArea.help-highlight {
+    -fx-control-inner-background: #fff6cc;
+}
+
+.help-note {
+    -fx-padding: 0.6em 0.9em 0.6em 0.9em;
+    -fx-background-color: #e8f1fb;
+    -fx-border-color: transparent transparent transparent #1f6fb2;
+    -fx-border-width: 0 0 0 0.3em;
+}
+
+.help-list {
+    -fx-spacing: 0.3em;
+    -fx-padding: 0 0 0 0.5em;
+}
+
+.help-list-item {
+    -fx-spacing: 0.5em;
+}
+
+.help-image {
+    -fx-padding: 0.3em;
+    -fx-border-color: #c9d3dd;
+    -fx-background-color: white;
+}
+
+.help-table {
+    -fx-border-color: #c9d3dd;
+}
+
+.help-table-header, .help-table-cell, .help-table-cell-alt {
+    -fx-padding: 0.35em 0.6em 0.35em 0.6em;
+    -fx-border-color: transparent #e1e6eb #e1e6eb transparent;
+}
+
+.help-table-header {
+    -fx-background-color: #dde7f1;
+}
+
+.help-table-header .help-text {
+    -fx-font-weight: bold;
+}
+
+.help-table-cell-alt {
+    -fx-background-color: #f6f8fa;
+}

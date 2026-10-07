@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.bioinfo.proteomics</groupId>
+        <artifactId>pride-proteomics</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>pride-desktop</artifactId>
+    <name>PRIDE Desktop (JavaFX view)</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.bioinfo.proteomics</groupId>
+            <artifactId>pride-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <!-- Only app.properties is filtered: it receives the project version. -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>com/bioinfo/proteomics/desktop/app.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>com/bioinfo/proteomics/desktop/app.properties</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <propertiesEncoding>UTF-8</propertiesEncoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>com.bioinfo.proteomics.desktop.DesktopLauncher</mainClass>
+                </configuration>
+                <executions>
+                    <!-- mvn -pl desktop javafx:run@screenshots: guide screenshots (EN + FR) -->
+                    <execution>
+                        <id>screenshots</id>
+                        <configuration>
+                            <mainClass>com.bioinfo.proteomics.desktop.tools.ScreenshotGenerator</mainClass>
+                        </configuration>
+                    </execution>
+                    <!-- mvn -pl desktop javafx:run@icons: redraws the application icons -->
+                    <execution>
+                        <id>icons</id>
+                        <configuration>
+                            <mainClass>com.bioinfo.proteomics.desktop.tools.IconGenerator</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

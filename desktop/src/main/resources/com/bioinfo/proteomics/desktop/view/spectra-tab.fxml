@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- "Spectra" tab: spectrum viewer and annotation. Texts are message keys (see main-view.fxml). -->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      spacing="10" styleClass="tab-content"
+      fx:controller="com.bioinfo.proteomics.desktop.controller.SpectraTabController">
+
+    <!-- Sources: JSON file or PRIDE USI -->
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Button fx:id="openButton" text="spectra.open" styleClass="primary-button"
+                onAction="#onOpenSpectra">
+            <tooltip><Tooltip text="tip.open"/></tooltip>
+        </Button>
+        <Label text="spectra.parseMode"/>
+        <ComboBox fx:id="parseModeBox">
+            <tooltip><Tooltip text="tip.parseMode"/></tooltip>
+        </ComboBox>
+        <Separator orientation="VERTICAL"/>
+        <Label text="spectra.usi"/>
+        <TextField fx:id="usiField" HBox.hgrow="ALWAYS" onAction="#onLoadUsi"
+                   promptText="spectra.usi.prompt">
+            <tooltip><Tooltip text="tip.usi"/></tooltip>
+        </TextField>
+        <Button fx:id="downloadButton" text="spectra.download" onAction="#onLoadUsi"/>
+        <Button text="?" styleClass="help-button" onAction="#onHelp">
+            <tooltip><Tooltip text="tip.tabHelp"/></tooltip>
+        </Button>
+    </HBox>
+
+    <SplitPane dividerPositions="0.25" VBox.vgrow="ALWAYS">
+        <!-- Loaded spectra -->
+        <ListView fx:id="spectrumList">
+            <tooltip><Tooltip text="tip.spectrumList"/></tooltip>
+            <placeholder><Label text="spectra.placeholder" wrapText="true"/></placeholder>
+        </ListView>
+
+        <!-- Selected spectrum and its annotation -->
+        <VBox spacing="8">
+            <padding><Insets left="8"/></padding>
+            <Label fx:id="spectrumDetailsLabel" styleClass="summary"/>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="spectra.peptide"/>
+                <TextField fx:id="annotationPeptideField" promptText="spectra.peptide.prompt"
+                           HBox.hgrow="ALWAYS" onAction="#onAnnotate">
+                    <tooltip><Tooltip text="tip.annotationPeptide"/></tooltip>
+                </TextField>
+                <Label text="spectra.tolerance"/>
+                <TextField fx:id="toleranceField" text="20" prefWidth="60">
+                    <tooltip><Tooltip text="tip.tolerance"/></tooltip>
+                </TextField>
+                <ComboBox fx:id="toleranceUnitBox"/>
+                <Button fx:id="annotateButton" text="spectra.annotate"
+                        styleClass="primary-button" onAction="#onAnnotate">
+                    <tooltip><Tooltip text="tip.annotate"/></tooltip>
+                </Button>
+            </HBox>
+            <!-- Reference spectrum: second file, loaded spectrum or theoretical spectrum -->
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="spectra.compare"/>
+                <Button fx:id="openReferenceButton" text="spectra.openReference"
+                        onAction="#onOpenReference">
+                    <tooltip><Tooltip text="tip.openReference"/></tooltip>
+                </Button>
+                <Button fx:id="theoreticalButton" text="spectra.theoretical"
+                        onAction="#onTheoretical">
+                    <tooltip><Tooltip text="tip.theoretical"/></tooltip>
+                </Button>
+                <ComboBox fx:id="referenceBox" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                    <tooltip><Tooltip text="tip.reference"/></tooltip>
+                </ComboBox>
+                <ComboBox fx:id="comparisonModeBox">
+                    <tooltip><Tooltip text="tip.comparisonMode"/></tooltip>
+                </ComboBox>
+                <Button fx:id="clearReferenceButton" text="spectra.clearReference"
+                        onAction="#onClearReference">
+                    <tooltip><Tooltip text="tip.clearReference"/></tooltip>
+                </Button>
+            </HBox>
+            <Label fx:id="similarityLabel" styleClass="summary" managed="false" visible="false"/>
+            <!-- The overlay draws the zoom rectangle and the selected peak over the chart. -->
+            <StackPane VBox.vgrow="ALWAYS">
+                <LineChart fx:id="spectrumChart" createSymbols="false" animated="false"
+                           legendVisible="true">
+                    <xAxis><NumberAxis label="m/z" forceZeroInRange="false"/></xAxis>
+                    <yAxis><NumberAxis label="chart.intensity"/></yAxis>
+                </LineChart>
+                <Pane fx:id="chartOverlay"/>
+            </StackPane>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label fx:id="peakInfoLabel" styleClass="peak-info" wrapText="true"
+                       maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="fullViewButton" text="spectra.fullView" onAction="#onFullView">
+                    <tooltip><Tooltip text="tip.fullView"/></tooltip>
+                </Button>
+            </HBox>
+            <TableView fx:id="annotationTable" prefHeight="180">
+                <placeholder>
+                    <Label text="spectra.annotationPlaceholder" wrapText="true"/>
+                </placeholder>
+                <columns>
+                    <TableColumn fx:id="annotationLabelColumn" text="column.ion"
+                                 prefWidth="90"/>
+                    <TableColumn fx:id="annotationTheoColumn" text="column.theoreticalMz"
+                                 prefWidth="140"/>
+                    <TableColumn fx:id="annotationObsColumn" text="column.observedMz"
+                                 prefWidth="140"/>
+                    <TableColumn fx:id="annotationErrorColumn" text="column.errorPpm"
+                                 prefWidth="110"/>
+                    <TableColumn fx:id="annotationIntensityColumn" text="column.intensity"
+                                 prefWidth="140"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </SplitPane>
+
+    <!-- Problems found while reading the spectra -->
+    <TitledPane fx:id="issuesPane" text="spectra.issues" expanded="false">
+        <ListView fx:id="issueList" prefHeight="120">
+            <placeholder><Label text="spectra.noIssues"/></placeholder>
+        </ListView>
+    </TitledPane>
+</VBox>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- "UniProt" tab: protein digestion. Texts are message keys (see main-view.fxml). -->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      spacing="10" styleClass="tab-content"
+      fx:controller="com.bioinfo.proteomics.desktop.controller.UniProtTabController">
+
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Label text="uniprot.accession"/>
+        <TextField fx:id="accessionField" text="P69905" prefWidth="110"
+                   onAction="#onFetchProtein">
+            <tooltip><Tooltip text="tip.accession"/></tooltip>
+        </TextField>
+        <Label text="uniprot.enzyme"/>
+        <!-- The longest enzyme names stay readable in the open list. -->
+        <ComboBox fx:id="proteaseBox" prefWidth="150">
+            <tooltip><Tooltip text="tip.enzyme"/></tooltip>
+        </ComboBox>
+        <Label text="uniprot.missedCleavages"/>
+        <Spinner fx:id="missedCleavageSpinner" prefWidth="70" min="0" max="5" initialValue="1">
+            <tooltip><Tooltip text="tip.missedCleavages"/></tooltip>
+        </Spinner>
+        <Label text="uniprot.length"/>
+        <Spinner fx:id="minLengthSpinner" prefWidth="70" min="1" max="100" initialValue="6"
+                 editable="true">
+            <tooltip><Tooltip text="tip.peptideLength"/></tooltip>
+        </Spinner>
+        <Label text="uniprot.lengthTo"/>
+        <Spinner fx:id="maxLengthSpinner" prefWidth="70" min="1" max="100" initialValue="30"
+                 editable="true">
+            <tooltip><Tooltip text="tip.peptideLength"/></tooltip>
+        </Spinner>
+        <Label text="peptide.massType"/>
+        <ComboBox fx:id="digestMassTypeBox">
+            <tooltip><Tooltip text="tip.massType"/></tooltip>
+        </ComboBox>
+        <Button fx:id="uniprotButton" text="uniprot.query" styleClass="primary-button"
+                onAction="#onFetchProtein"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="?" styleClass="help-button" onAction="#onHelp">
+            <tooltip><Tooltip text="tip.tabHelp"/></tooltip>
+        </Button>
+    </HBox>
+
+    <Label fx:id="proteinSummaryLabel" styleClass="summary" wrapText="true"/>
+    <TableView fx:id="digestTable" VBox.vgrow="ALWAYS">
+        <tooltip><Tooltip text="tip.digestTable"/></tooltip>
+        <placeholder><Label text="uniprot.placeholder" wrapText="true"/></placeholder>
+        <columns>
+            <TableColumn fx:id="digestSequenceColumn" text="column.peptide" prefWidth="300"/>
+            <TableColumn fx:id="digestStartColumn" text="column.start" prefWidth="70"/>
+            <TableColumn fx:id="digestEndColumn" text="column.end" prefWidth="70"/>
+            <TableColumn fx:id="digestMissedColumn" text="column.missed" prefWidth="60"/>
+            <TableColumn fx:id="digestMassColumn" text="column.neutralMass" prefWidth="140"/>
+            <TableColumn fx:id="digestMz1Column" text="[M+H]+" prefWidth="140"/>
+            <TableColumn fx:id="digestMz2Column" text="[M+2H]2+" prefWidth="140"/>
+        </columns>
+    </TableView>
+</VBox>
