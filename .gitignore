@@ -4,6 +4,8 @@ target/
 # Web client: dependencies and production build
 web/client/node_modules/
 web/client/dist/
+web/client/test-results/
+web/client/playwright-report/
 
 # IDE settings
 .idea/

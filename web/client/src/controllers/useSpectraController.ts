@@ -17,7 +17,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { AppModel } from '../model/AppModel';
 import type { MzRange } from '../model/mzRange';
-import type { SampleFile } from '../model/samples';
+import { SAMPLE_FILES, type SampleFile } from '../model/samples';
 import { failure } from '../model/status';
 import type { PeakAnnotation, ParseMode, Peak, Spectrum, ToleranceUnit } from '../model/types';
 import { copyToClipboard, type Navigator } from './navigator';
@@ -25,6 +25,9 @@ import { useStore } from './useStore';
 
 /** Drawing of the reference spectrum: downwards, or upwards over the spectrum. */
 export type ComparisonMode = 'MIRROR' | 'OVERLAY';
+
+/** Sample files offered as one-click buttons while no spectrum is open. */
+const FEATURED_SAMPLES = SAMPLE_FILES.filter((s) => /^0[124]-/.test(s.name));
 
 /**
  * Reads the tolerance typed by the user, who may use a comma as decimal separator.
@@ -155,6 +158,7 @@ export function useSpectraController(model: AppModel, navigator: Navigator) {
     openFile: () => fileInput.current?.click(),
     onFileChosen,
     openSample: (sample: SampleFile) => model.loadSample(sample.url, sample.name, mode),
+    featuredSamples: FEATURED_SAMPLES,
     downloadUsi: () => model.loadSpectrumByUsi(usi),
     select: (s: Spectrum) => model.selectSpectrum(s),
     annotate: () => annotate(),

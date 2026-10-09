@@ -2,6 +2,7 @@
 import { readFileSync } from 'node:fs';
 import react from '@vitejs/plugin-react';
 import { defineConfig, searchForWorkspaceRoot, type Plugin } from 'vite';
+import { configDefaults } from 'vitest/config';
 
 const LICENSE_FILE = 'LICENSE.txt';
 const BANNER =
@@ -73,5 +74,7 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    // Functional tests in e2e/ run in a browser with Playwright ("npm run test:e2e").
+    exclude: [...configDefaults.exclude, 'e2e/**'],
   },
 });

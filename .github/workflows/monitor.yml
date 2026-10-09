@@ -1,0 +1,32 @@
+# Tests the deployed web application every day, like a visitor, so that a breakage (a change of
+# the UniProt or PRIDE APIs, a stopped server, an expired certificate) is found before a visitor
+# finds it. GitHub emails the owner of the repository when a scheduled run fails.
+name: Production monitor
+
+on:
+  schedule:
+    - cron: '30 11 * * *'
+  workflow_dispatch:
+
+jobs:
+  production:
+    name: proteospectra.maximeethier.com
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web/client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/client/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: web/client/playwright-report/

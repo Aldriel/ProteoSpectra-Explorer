@@ -492,6 +492,15 @@ body.resizing-column {
   text-align: center;
   color: var(--muted);
 }
+.sample-offer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4em;
+}
+.sample-offer p {
+  margin: 0 0 0.3em;
+}
 .charge-table {
   flex: 0 0 20em;
 }

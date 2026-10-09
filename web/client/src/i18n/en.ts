@@ -93,7 +93,7 @@ export const en: Messages = {
     usi: 'PRIDE USI',
     usiPrompt: 'mzspec:PXD000561:Adult_Frontalcortex_bRP_Elite_85_f09:scan:17555:VLHPLEGAVVIIFK/2',
     download: 'Download',
-    placeholder: 'No spectra.\nClick “Open file…”: sample files are offered in the File menu.',
+    placeholder: 'No spectra.\nOpen a file, or try a sample (more in the File menu):',
     peptide: 'Peptide',
     peptidePrompt: 'empty = peptide identified for the spectrum',
     tolerance: 'Tolerance',

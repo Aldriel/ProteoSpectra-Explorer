@@ -171,7 +171,16 @@ export function SpectraView({ ctl }: Props) {
             rowKey={(s, index) => `${index}-${s.id}`}
             selected={spectrum}
             onSelect={ctl.select}
-            placeholder={<span className="pre-line">{m.spectra.placeholder}</span>}
+            placeholder={
+              <div className="sample-offer">
+                <p className="pre-line">{m.spectra.placeholder}</p>
+                {ctl.featuredSamples.map((sample) => (
+                  <button key={sample.url} type="button" onClick={() => ctl.openSample(sample)}>
+                    {sample.name}
+                  </button>
+                ))}
+              </div>
+            }
             columns={[{ header: '', cell: spectrumName }]}
             onContextMenu={(row, event) =>
               menu.open(event, [

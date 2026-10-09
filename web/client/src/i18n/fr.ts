@@ -112,8 +112,8 @@ export const fr = {
     usiPrompt: 'mzspec:PXD000561:Adult_Frontalcortex_bRP_Elite_85_f09:scan:17555:VLHPLEGAVVIIFK/2',
     download: 'Télécharger',
     placeholder:
-      'Aucun spectre.\nCliquez sur « Ouvrir un fichier… » : des fichiers d’exemple sont ' +
-      'proposés dans le menu Fichier.',
+      'Aucun spectre.\nOuvrez un fichier, ou essayez un exemple (les autres sont dans le ' +
+      'menu Fichier) :',
     peptide: 'Peptide',
     peptidePrompt: 'vide = peptide identifié du spectre',
     tolerance: 'Tolérance',
