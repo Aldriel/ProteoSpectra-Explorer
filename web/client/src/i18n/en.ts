@@ -308,6 +308,8 @@ export const en: Messages = {
     LYS_C: 'Lys-C',
     ARG_C: 'Arg-C',
     GLU_C: 'Glu-C',
+    ASP_N: 'Asp-N (cleaves before D)',
+    CHYMOTRYPSIN: 'Chymotrypsin',
   },
 
   status: {

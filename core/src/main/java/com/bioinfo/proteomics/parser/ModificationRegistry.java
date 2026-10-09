@@ -40,6 +40,10 @@ public final class ModificationRegistry {
         registry.register(Modification.DEAMIDATED);
         registry.register(Modification.METHYL);
         registry.register(Modification.AMIDATED);
+        registry.register(Modification.GLN_TO_PYRO_GLU);
+        registry.register(Modification.GLU_TO_PYRO_GLU);
+        registry.register(Modification.DIOXIDATION);
+        registry.register(Modification.HEX);
         return registry;
     }
 

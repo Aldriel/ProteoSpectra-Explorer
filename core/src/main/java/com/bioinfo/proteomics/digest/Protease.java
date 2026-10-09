@@ -16,32 +16,46 @@
 
 package com.bioinfo.proteomics.digest;
 
-/** Proteolytic enzymes with their C-terminal cleavage rules. */
+/**
+ * Proteolytic enzymes with their cleavage rules. Most enzymes cleave after (C-terminal to) given
+ * residues; Asp-N cleaves before (N-terminal to) them.
+ */
 public enum Protease {
     /** Cleaves after K or R, except when followed by P. */
-    TRYPSIN("KR", true),
+    TRYPSIN("KR", "", true),
     /** Cleaves after K or R, including before P. */
-    TRYPSIN_P("KR", false),
+    TRYPSIN_P("KR", "", false),
     /** Cleaves after K, except when followed by P. */
-    LYS_C("K", true),
+    LYS_C("K", "", true),
     /** Cleaves after R, except when followed by P. */
-    ARG_C("R", true),
+    ARG_C("R", "", true),
     /** Cleaves after E (bicarbonate buffer), except when followed by P. */
-    GLU_C("E", true);
+    GLU_C("E", "", true),
+    /** Cleaves before D. */
+    ASP_N("", "D", false),
+    /** High-specificity chymotrypsin: cleaves after F, Y or W, except when followed by P. */
+    CHYMOTRYPSIN("FYW", "", true);
 
-    private final String cleavageResidues;
+    private final String cleavedAfter;
+    private final String cleavedBefore;
     private final boolean blockedByProline;
 
-    Protease(String cleavageResidues, boolean blockedByProline) {
-        this.cleavageResidues = cleavageResidues;
+    Protease(String cleavedAfter, String cleavedBefore, boolean blockedByProline) {
+        this.cleavedAfter = cleavedAfter;
+        this.cleavedBefore = cleavedBefore;
         this.blockedByProline = blockedByProline;
     }
 
     /** Whether the bond between {@code current} and {@code next} is cleaved. */
     public boolean cleavesBetween(char current, char next) {
-        if (cleavageResidues.indexOf(Character.toUpperCase(current)) < 0) {
+        char before = Character.toUpperCase(current);
+        char after = Character.toUpperCase(next);
+        if (cleavedBefore.indexOf(after) >= 0) {
+            return true;
+        }
+        if (cleavedAfter.indexOf(before) < 0) {
             return false;
         }
-        return !(blockedByProline && Character.toUpperCase(next) == 'P');
+        return !(blockedByProline && after == 'P');
     }
 }

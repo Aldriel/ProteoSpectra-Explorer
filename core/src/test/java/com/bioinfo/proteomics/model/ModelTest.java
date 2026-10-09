@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.bioinfo.proteomics.mass.MassConstants;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -81,6 +83,42 @@ class ModelTest {
             assertFalse(Modification.OXIDATION.isMassOnly());
             assertEquals(15.9994, Modification.OXIDATION.delta(MassType.AVERAGE));
             assertEquals(15.994915, Modification.OXIDATION.delta(MassType.MONOISOTOPIC));
+        }
+
+        @Test
+        void pyroglutamateLossesMatchAmmoniaAndWater() {
+            double ammoniaMonoisotopic = 17.026549;
+            assertEquals(
+                    -ammoniaMonoisotopic, Modification.GLN_TO_PYRO_GLU.monoisotopicDelta(), 1e-6);
+            assertEquals(
+                    -MassConstants.WATER_MONOISOTOPIC,
+                    Modification.GLU_TO_PYRO_GLU.monoisotopicDelta(),
+                    1e-6);
+            assertEquals(
+                    -MassConstants.WATER_AVERAGE,
+                    Modification.GLU_TO_PYRO_GLU.averageDelta(),
+                    1e-3);
+        }
+
+        @Test
+        void dioxidationAddsTwiceTheOxidation() {
+            assertEquals(
+                    2 * Modification.OXIDATION.monoisotopicDelta(),
+                    Modification.DIOXIDATION.monoisotopicDelta(),
+                    1e-5);
+            assertEquals(
+                    2 * Modification.OXIDATION.averageDelta(),
+                    Modification.DIOXIDATION.averageDelta(),
+                    1e-3);
+        }
+
+        @Test
+        void hexoseIsGlucoseMinusWater() {
+            double glucoseMonoisotopic = 180.063388;
+            assertEquals(
+                    glucoseMonoisotopic - MassConstants.WATER_MONOISOTOPIC,
+                    Modification.HEX.monoisotopicDelta(),
+                    1e-6);
         }
 
         @Test
@@ -158,6 +196,43 @@ class ModelTest {
             assertEquals(List.of(Modification.METHYL), fixed.residues().get(0).modifications());
             assertEquals(
                     List.of(Modification.CARBAMIDOMETHYL), fixed.residues().get(1).modifications());
+        }
+
+        @Test
+        void modificationAtOneSiteOnly() {
+            Peptide p = Peptide.of("ANGNK").withModificationAt(2, Modification.DEAMIDATED);
+            assertEquals("AN[Deamidated]GNK", p.toProForma());
+            assertFalse(p.residues().get(3).isModified(), "the other asparagine is untouched");
+        }
+
+        @Test
+        void modificationAtKeepsExistingModifications() {
+            Peptide p =
+                    Peptide.of("MK")
+                            .withModificationAt(1, Modification.OXIDATION)
+                            .withModificationAt(1, Modification.ofMass(1.5));
+            assertEquals("M[Oxidation][+1.5000]K", p.toProForma());
+        }
+
+        @Test
+        void modificationAtTerminalPositions() {
+            Peptide p =
+                    Peptide.of("QVK")
+                            .withModificationAt(1, Modification.GLN_TO_PYRO_GLU)
+                            .withModificationAt(3, Modification.HEX);
+            assertEquals("Q[Gln->pyro-Glu]VK[Hex]", p.toProForma());
+        }
+
+        @Test
+        void modificationAtValidation() {
+            Peptide p = Peptide.of("AK");
+            assertThrows(
+                    IndexOutOfBoundsException.class,
+                    () -> p.withModificationAt(0, Modification.METHYL));
+            assertThrows(
+                    IndexOutOfBoundsException.class,
+                    () -> p.withModificationAt(3, Modification.METHYL));
+            assertThrows(NullPointerException.class, () -> p.withModificationAt(1, null));
         }
 
         @Test

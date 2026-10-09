@@ -104,8 +104,8 @@ Accepted syntax:
 | `K[Methyl][Methyl]` | Several modifications on the same residue |
 
 Modifications recognized by name: `Carbamidomethyl` (+57.021), `Oxidation` (+15.995), `Phospho`
-(+79.966), `Acetyl` (+42.011), `Deamidated` (+0.984), `Methyl` (+14.016), `Amidated` (−0.984). For
-any other modification, use a mass shift, for example `[+229.163]` for TMT.
+(+79.966), `Acetyl` (+42.011), `Deamidated` (+0.984), `Methyl` (+14.016), `Amidated` (−0.984), `Gln->pyro-Glu` (−17.027),
+`Glu->pyro-Glu` (−18.011), `Dioxidation` (+31.990), `Hex` (+162.053). For any other modification, use a mass shift, for example `[+229.163]` for TMT.
 
 ## Decoy peptides
 
@@ -280,7 +280,7 @@ Fetches a protein from UniProtKB and digests it *in silico* to list its theoreti
 | # | Element | Description |
 |---|---|---|
 | 1 | Accession | For example `P69905` (human hemoglobin alpha), `P02769` (bovine albumin) or `P00924` (yeast enolase). An isoform is written `P69905-2`. |
-| 2 | Parameters | **Enzyme**: Trypsin (cleaves after K/R except before P), Trypsin/P (also before P), Lys-C (after K), Arg-C (after R), Glu-C (after E). **Missed cleavages**: number of uncleaved internal sites allowed. **Length**: length range of the peptides kept (6 to 30 residues by default; raise the maximum for Lys-C or Glu-C, which produce longer peptides). **Mass**: monoisotopic or average. |
+| 2 | Parameters | **Enzyme**: Trypsin (cleaves after K/R except before P), Trypsin/P (also before P), Lys-C (after K), Arg-C (after R), Glu-C (after E), Asp-N (before D), Chymotrypsin (after F/Y/W except before P). **Missed cleavages**: number of uncleaved internal sites allowed. **Length**: length range of the peptides kept (6 to 30 residues by default; raise the maximum for Lys-C or Glu-C, which produce longer peptides). **Mass**: monoisotopic or average. |
 | 3 | Query UniProt | Downloads the UniProt entry and computes the digestion. |
 | 4 | Summary | Protein name, organism, Swiss-Prot (reviewed) or TrEMBL status, length, total mass, number of peptides. |
 | 5 | Peptides | Peptides within the chosen length range: start and end positions (1-based), missed cleavages (MC), neutral mass, [M+H]+ and [M+2H]2+. |

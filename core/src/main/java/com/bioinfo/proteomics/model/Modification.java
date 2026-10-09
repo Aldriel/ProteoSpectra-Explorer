@@ -54,6 +54,21 @@ public record Modification(
     /** C-terminal amidation, frequent in neuropeptides. */
     public static final Modification AMIDATED = new Modification("Amidated", 2, -0.984016, -0.9848);
 
+    /** Cyclization of an N-terminal glutamine into pyroglutamate, frequent in antibodies. */
+    public static final Modification GLN_TO_PYRO_GLU =
+            new Modification("Gln->pyro-Glu", 28, -17.026549, -17.0305);
+
+    /** Cyclization of an N-terminal glutamate into pyroglutamate. */
+    public static final Modification GLU_TO_PYRO_GLU =
+            new Modification("Glu->pyro-Glu", 27, -18.010565, -18.0153);
+
+    /** Addition of two oxygens, typically on tryptophan or methionine. */
+    public static final Modification DIOXIDATION =
+            new Modification("Dioxidation", 425, 31.989829, 31.9988);
+
+    /** Addition of a hexose, such as the glycation of a lysine by glucose. */
+    public static final Modification HEX = new Modification("Hex", 41, 162.052824, 162.1406);
+
     /** Validates the modification: non-blank name, finite deltas, non-negative Unimod id. */
     public Modification {
         Objects.requireNonNull(name, "name");

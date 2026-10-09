@@ -107,8 +107,8 @@ Syntaxe acceptée :
 | `K[Methyl][Methyl]` | Plusieurs modifications sur le même résidu |
 
 Modifications reconnues par leur nom : `Carbamidomethyl` (+57,021), `Oxidation` (+15,995), `Phospho`
-(+79,966), `Acetyl` (+42,011), `Deamidated` (+0,984), `Methyl` (+14,016), `Amidated` (−0,984). Pour
-toute autre modification, utilisez un décalage de masse, par exemple `[+229.163]` pour le TMT.
+(+79,966), `Acetyl` (+42,011), `Deamidated` (+0,984), `Methyl` (+14,016), `Amidated` (−0,984), `Gln->pyro-Glu` (−17,027),
+`Glu->pyro-Glu` (−18,011), `Dioxidation` (+31,990), `Hex` (+162,053). Pour toute autre modification, utilisez un décalage de masse, par exemple `[+229.163]` pour le TMT.
 
 ## Peptides leurres (decoys)
 
@@ -287,7 +287,7 @@ Récupère une protéine dans UniProtKB et la digère *in silico* pour lister se
 | # | Élément | Description |
 |---|---|---|
 | 1 | Accession | Par exemple `P69905` (hémoglobine α humaine), `P02769` (albumine bovine) ou `P00924` (énolase de levure). Une isoforme s’écrit `P69905-2`. |
-| 2 | Paramètres | **Enzyme** : Trypsine (coupe après K/R sauf devant P), Trypsine/P (coupe aussi devant P), Lys-C (après K), Arg-C (après R), Glu-C (après E). **Clivages manqués** : nombre de sites internes non coupés tolérés. **Longueur** : plage de longueur des peptides conservés (6 à 30 résidus par défaut ; élargissez le maximum pour Lys-C ou Glu-C, qui produisent des peptides plus longs). **Masse** : monoisotopique ou moyenne. |
+| 2 | Paramètres | **Enzyme** : Trypsine (coupe après K/R sauf devant P), Trypsine/P (coupe aussi devant P), Lys-C (après K), Arg-C (après R), Glu-C (après E), Asp-N (devant D), Chymotrypsine (après F/Y/W sauf devant P). **Clivages manqués** : nombre de sites internes non coupés tolérés. **Longueur** : plage de longueur des peptides conservés (6 à 30 résidus par défaut ; élargissez le maximum pour Lys-C ou Glu-C, qui produisent des peptides plus longs). **Masse** : monoisotopique ou moyenne. |
 | 3 | Interroger UniProt | Télécharge la fiche UniProt et calcule la digestion. |
 | 4 | Résumé | Nom de la protéine, organisme, statut Swiss-Prot (révisée) ou TrEMBL, longueur, masse totale, nombre de peptides. |
 | 5 | Peptides | Peptides de la plage de longueur choisie : positions de début et de fin (base 1), clivages manqués (CM), masse neutre, [M+H]+ et [M+2H]2+. |

@@ -1,5 +1,7 @@
 dist/
 node_modules/
+playwright-report/
+test-results/
 package-lock.json
 # The user guides keep the layout of the desktop guides, written for their Markdown parser.
 src/help/*.md

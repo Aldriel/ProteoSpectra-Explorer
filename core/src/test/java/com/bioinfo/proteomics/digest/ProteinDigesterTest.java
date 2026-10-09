@@ -74,6 +74,26 @@ class ProteinDigesterTest {
                         .sequence());
     }
 
+    @Test
+    void aspNCleavesBeforeAspartate() {
+        List<String> peptides =
+                new ProteinDigester(Protease.ASP_N, 0, 1, 50)
+                        .digest("DAAKDGGDPP").stream()
+                        .map(DigestedPeptide::sequence)
+                        .toList();
+        assertEquals(List.of("DAAK", "DGG", "DPP"), peptides, "no cut before the first residue");
+    }
+
+    @Test
+    void chymotrypsinCleavesAfterAromaticResidues() {
+        List<String> peptides =
+                new ProteinDigester(Protease.CHYMOTRYPSIN, 0, 1, 50)
+                        .digest("AFGYPAWK").stream()
+                        .map(DigestedPeptide::sequence)
+                        .toList();
+        assertEquals(List.of("AF", "GYPAW", "K"), peptides, "Y followed by P is not cleaved");
+    }
+
     @ParameterizedTest
     @CsvSource({
         "TRYPSIN,   K, A, true",
@@ -84,6 +104,15 @@ class ProteinDigesterTest {
         "ARG_C,     r, a, true",
         "GLU_C,     E, A, true",
         "GLU_C,     D, A, false",
+        "ASP_N,     A, D, true",
+        "ASP_N,     A, d, true",
+        "ASP_N,     D, A, false",
+        "ASP_N,     K, D, true",
+        "CHYMOTRYPSIN, F, A, true",
+        "CHYMOTRYPSIN, Y, A, true",
+        "CHYMOTRYPSIN, w, a, true",
+        "CHYMOTRYPSIN, W, P, false",
+        "CHYMOTRYPSIN, L, A, false",
     })
     void cleavageRules(Protease protease, char current, char next, boolean expected) {
         assertEquals(expected, protease.cleavesBetween(current, next));

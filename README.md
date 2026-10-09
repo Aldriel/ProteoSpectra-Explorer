@@ -137,11 +137,11 @@ mvn verify                       # Checkstyle, tests JUnit 5 et couverture JaCoC
 cd web/client; npm run check     # types, ESLint, Prettier et tests Vitest
 ```
 
-473 tests au total :
+495 tests au total :
 
 | Module | Tests | Contenu |
 |---|---|---|
-| `core` | 326 | Masses, modifications, leurres, spectres théoriques et similarité, parseurs, clients HTTP, digestion |
+| `core` | 348 | Masses, modifications, leurres, spectres théoriques et similarité, parseurs, clients HTTP, digestion |
 | `desktop` | 83 | Modèle, messages FR/EN, guide d'aide, préférences, fichiers d'échantillon |
 | `web/server` | 26 | Tests d'intégration de l'API REST, téléchargements PRIDE |
 | `web/client` | 38 | Modèle (dernier appel gagnant, référence, téléchargements), accès à l'API, zoom, règles PRIDE, préférences, messages FR/EN, guide d'aide, pied de page |

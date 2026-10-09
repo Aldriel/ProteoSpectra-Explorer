@@ -21,7 +21,15 @@ import { copyToClipboard, type Navigator } from './navigator';
 import { useStore } from './useStore';
 
 /** Enzymes offered by the tab, in display order. */
-export const PROTEASES: readonly Protease[] = ['TRYPSIN', 'TRYPSIN_P', 'LYS_C', 'ARG_C', 'GLU_C'];
+export const PROTEASES: readonly Protease[] = [
+  'TRYPSIN',
+  'TRYPSIN_P',
+  'LYS_C',
+  'ARG_C',
+  'GLU_C',
+  'ASP_N',
+  'CHYMOTRYPSIN',
+];
 
 export const MISSED_CLEAVAGE_LIMITS = { min: 0, max: 5 } as const;
 export const LENGTH_LIMITS = { min: 1, max: 100 } as const;

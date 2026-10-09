@@ -103,6 +103,26 @@ public record Peptide(
     }
 
     /**
+     * Returns a copy where the residue at {@code position} also carries {@code modification}
+     * (typical use: a deamidation measured on a single asparagine).
+     *
+     * @param position 1-based position of the residue, from the N-terminus
+     * @param modification modification added after those already on the residue
+     * @return the modified copy
+     * @throws IndexOutOfBoundsException if {@code position} is not within the peptide
+     */
+    public Peptide withModificationAt(int position, Modification modification) {
+        Objects.requireNonNull(modification, "modification");
+        Objects.checkIndex(position - 1, residues.size());
+        List<Residue> updated = new ArrayList<>(residues);
+        Residue target = updated.get(position - 1);
+        List<Modification> mods = new ArrayList<>(target.modifications());
+        mods.add(modification);
+        updated.set(position - 1, new Residue(target.aminoAcid(), mods));
+        return new Peptide(updated, nTermModifications, cTermModifications);
+    }
+
+    /**
      * Serializes the peptide in ProForma-like notation, e.g. {@code [Acetyl]-PEPM[Oxidation]TIDE}.
      */
     public String toProForma() {

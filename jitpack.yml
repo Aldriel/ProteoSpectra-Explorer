@@ -1,0 +1,7 @@
+# Publishes pride-core for other projects (such as MabScope) through https://jitpack.io:
+#   com.github.Aldriel.ProteoSpectra-Explorer:pride-core:<git tag>
+# Only the parent POM and core are built: the desktop and server modules are applications.
+jdk:
+  - openjdk21
+install:
+  - mvn -B install -pl core -am -DskipTests -Dcheckstyle.skip -Djacoco.skip

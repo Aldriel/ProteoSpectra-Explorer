@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bioinfo.proteomics.model.AminoAcid;
 import com.bioinfo.proteomics.model.Modification;
 import com.bioinfo.proteomics.model.Peptide;
+import com.bioinfo.proteomics.model.Residue;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -93,6 +94,26 @@ class PeptideSequenceParserTest {
     void multipleModificationsOnOneResidue() {
         Peptide p = parser.parse("K[Methyl][ Methyl ]");
         assertEquals(2, p.residues().getFirst().modifications().size());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "'Q[Gln->pyro-Glu]VQLVQSGAEVK', UNIMOD:28",
+        "'E[Glu->pyro-Glu]VQLVESGGGLVQPGGSLR', UNIMOD:27",
+        "'FNW[Dioxidation]YVDGVEVHNAK', UNIMOD:425",
+        "'K[Hex]', UNIMOD:41",
+    })
+    void antibodyModificationsAreKnownByNameAndAccession(String input, String accession) {
+        Peptide byName = parser.parse(input);
+        Modification mod =
+                byName.residues().stream()
+                        .filter(Residue::isModified)
+                        .findFirst()
+                        .orElseThrow()
+                        .modifications()
+                        .getFirst();
+        assertSame(mod, ModificationRegistry.withDefaults().find(accession).orElseThrow());
+        assertEquals(input, byName.toProForma());
     }
 
     @Test

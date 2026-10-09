@@ -334,6 +334,8 @@ export const fr = {
     LYS_C: 'Lys-C',
     ARG_C: 'Arg-C',
     GLU_C: 'Glu-C',
+    ASP_N: 'Asp-N (coupe devant D)',
+    CHYMOTRYPSIN: 'Chymotrypsine',
   },
 
   status: {

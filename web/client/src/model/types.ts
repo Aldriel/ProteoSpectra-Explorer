@@ -32,7 +32,8 @@ export type ParseMode = 'LENIENT' | 'STRICT';
 /** Unit of the m/z tolerance used to match peaks: parts per million or daltons. */
 export type ToleranceUnit = 'PPM' | 'DA';
 /** Enzymes available for in silico digestion. */
-export type Protease = 'TRYPSIN' | 'TRYPSIN_P' | 'LYS_C' | 'ARG_C' | 'GLU_C';
+export type Protease =
+  'TRYPSIN' | 'TRYPSIN_P' | 'LYS_C' | 'ARG_C' | 'GLU_C' | 'ASP_N' | 'CHYMOTRYPSIN';
 
 /** Peptide and options of a mass calculation. */
 export interface PeptideQuery {

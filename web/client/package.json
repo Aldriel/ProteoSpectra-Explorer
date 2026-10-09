@@ -2,7 +2,7 @@
   "name": "pride-web-client",
   "description": "React view of ProteoSpectra-Explorer (talks to the REST API of web/server)",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
