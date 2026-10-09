@@ -4,4 +4,4 @@
 jdk:
   - openjdk21
 install:
-  - mvn -B install -pl core -am -DskipTests -Dcheckstyle.skip -Djacoco.skip
+  - ./mvnw -B install -pl core -am -DskipTests -Dcheckstyle.skip -Djacoco.skip
