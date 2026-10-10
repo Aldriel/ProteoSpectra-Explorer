@@ -4,6 +4,9 @@
 # systemd service on 127.0.0.1:7070, and Caddy serves the web client and forwards /api to it, over
 # HTTPS with a Let's Encrypt certificate.
 #
+# The server can host other applications, such as MabScope: each one keeps its site in
+# /etc/caddy/sites/<domain>.caddy, imported by the main Caddyfile.
+#
 # Upload this script next to the built client (web/client/dist), then run it as root:
 #   bash setup-server.sh proteospectra.maximeethier.com
 # Running it again pulls the latest code from GitHub and redeploys.
@@ -15,6 +18,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 REPO=https://github.com/Aldriel/ProteoSpectra-Explorer.git
 APP=/opt/proteospectra
 WEB=/var/www/proteospectra
+SITES=/etc/caddy/sites
 
 if [[ ! -f "$HERE/dist/index.html" ]]; then
   echo "Missing $HERE/dist: upload web/client/dist next to this script." >&2
@@ -88,7 +92,19 @@ mkdir -p "$WEB"
 rm -rf "${WEB:?}"/*
 cp -r "$HERE/dist/." "$WEB/"
 
-cat > /etc/caddy/Caddyfile <<EOF
+# The main Caddyfile only imports the sites, so that other applications, such as MabScope, can
+# share the server. A Caddyfile written by an older version of this script, which held a single
+# site, is kept as the file of that site; the default page of the package is dropped.
+mkdir -p "$SITES"
+if ! grep -qs "^import $SITES/\*.caddy" /etc/caddy/Caddyfile; then
+  if grep -qs 'reverse_proxy' /etc/caddy/Caddyfile; then
+    previous="$(awk 'NF && $1 !~ /^#/ { print $1; exit }' /etc/caddy/Caddyfile)"
+    cp /etc/caddy/Caddyfile "$SITES/$previous.caddy"
+  fi
+  echo "import $SITES/*.caddy" > /etc/caddy/Caddyfile
+fi
+
+cat > "$SITES/$DOMAIN.caddy" <<EOF
 $DOMAIN {
 	encode zstd gzip
 
@@ -106,6 +122,7 @@ $DOMAIN {
 	header @assets Cache-Control "public, max-age=31536000, immutable"
 }
 EOF
+caddy validate --adapter caddyfile --config /etc/caddy/Caddyfile
 
 systemctl daemon-reload
 systemctl enable proteospectra caddy

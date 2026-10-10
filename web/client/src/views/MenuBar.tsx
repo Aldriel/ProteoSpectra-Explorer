@@ -154,7 +154,9 @@ function MenuList({ items, onDone }: { items: MenuItem[]; onDone: () => void }) 
                     setSubmenu(index);
                     const parent = e.currentTarget.parentElement;
                     requestAnimationFrame(() =>
-                      parent?.querySelector<HTMLButtonElement>('.menu-list button')?.focus(),
+                      parent
+                        ?.querySelector<HTMLButtonElement>(':scope > .menu-list button')
+                        ?.focus(),
                     );
                   }
                 }}
