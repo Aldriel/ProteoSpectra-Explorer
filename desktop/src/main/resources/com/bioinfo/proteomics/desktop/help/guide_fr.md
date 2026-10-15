@@ -266,7 +266,7 @@ mzspec:PXD000561:Adult_Frontalcortex_bRP_Elite_85_f09:scan:17555:VLHPLEGAVVIIFK/
 | # | Élément | Description |
 |---|---|---|
 | 1 | USI PRIDE | Identifiant du spectre. La fin `VLHPLEGAVVIIFK/2` est le peptide identifié et sa charge. |
-| 2 | Télécharger | Récupère le spectre par l’API PROXI de PRIDE. |
+| 2 | Télécharger | Récupère le spectre par l’API PROXI de PRIDE, ou par ProteomeCentral quand PRIDE ne répond pas. |
 | 3 | Détails | 564 pics, précurseur 767,9739 (2+) ; la valeur théorique est 767,9714, soit un écart de 3,3 ppm. |
 | 4 | Graphique | Après **Annoter** : 23 pics expliqués, soit 88 % des ions b/y théoriques. |
 | 5 | Annotations | Erreurs de masse toutes inférieures à 2 ppm. |

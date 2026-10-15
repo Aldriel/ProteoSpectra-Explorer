@@ -34,6 +34,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -231,6 +233,146 @@ class RemoteClientsTest {
                 usi,
                 URLDecoder.decode(
                         query.substring(query.indexOf("usi=") + 4), StandardCharsets.UTF_8));
+    }
+
+    private static final String USI =
+            "mzspec:PXD000561:Adult_Frontalcortex_bRP_Elite_85_f09:scan:17555:VLHPLEGAVVIIFK/2";
+    private static final URI ARCHIVE = URI.create("http://h/archive/");
+    private static final URI PROXI = URI.create("http://h/proxi/");
+    private static final URI FALLBACK = URI.create("http://h/central/");
+
+    /** Serves each base address with a response or a failure, and records the requests. */
+    private static final class ScriptedFetcher implements HttpFetcher {
+        private final Map<String, Object> script;
+        private final List<URI> requests = new ArrayList<>();
+
+        ScriptedFetcher(Map<String, Object> script) {
+            this.script = script;
+        }
+
+        @Override
+        public String get(URI uri) throws IOException {
+            requests.add(uri);
+            Object answer =
+                    script.entrySet().stream()
+                            .filter(e -> uri.toString().startsWith(e.getKey()))
+                            .map(Map.Entry::getValue)
+                            .findFirst()
+                            .orElseThrow();
+            if (answer instanceof IOException e) {
+                throw e;
+            }
+            return (String) answer;
+        }
+    }
+
+    private static RemoteServiceException status(String base, int code) {
+        return new RemoteServiceException(URI.create(base), code, "");
+    }
+
+    private static PrideClient clientOf(ScriptedFetcher fetcher) {
+        return new PrideClient(fetcher, ARCHIVE, PROXI, FALLBACK);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {429, 500, 502, 503})
+    void spectrumFallsBackToProteomeCentralWhenPrideFails(int code) throws Exception {
+        ScriptedFetcher fetcher =
+                new ScriptedFetcher(
+                        Map.of(
+                                "http://h/proxi/", status("http://h/proxi/", code),
+                                "http://h/central/",
+                                        TestResources.read("proxi-VLHPLEGAVVIIFK.json")));
+        ParseResult<Spectrum> result = clientOf(fetcher).fetchSpectrum(USI);
+        assertEquals("VLHPLEGAVVIIFK", result.items().getFirst().peptideSequence());
+        assertEquals(2, fetcher.requests.size());
+        assertTrue(fetcher.requests.get(1).toString().startsWith("http://h/central/spectra?"));
+        assertEquals(fetcher.requests.get(0).getRawQuery(), fetcher.requests.get(1).getRawQuery());
+    }
+
+    @Test
+    void spectrumFallsBackWhenPrideCannotBeReached() throws Exception {
+        ScriptedFetcher fetcher =
+                new ScriptedFetcher(
+                        Map.of(
+                                "http://h/proxi/", new IOException("timed out"),
+                                "http://h/central/",
+                                        TestResources.read("proxi-VLHPLEGAVVIIFK.json")));
+        assertEquals(1, clientOf(fetcher).fetchSpectrum(USI).items().size());
+    }
+
+    @Test
+    void spectrumDoesNotAskProteomeCentralWhenPrideAnswered() throws Exception {
+        ScriptedFetcher fetcher =
+                new ScriptedFetcher(
+                        Map.of(
+                                "http://h/proxi/", TestResources.read("proxi-VLHPLEGAVVIIFK.json"),
+                                "http://h/central/", status("http://h/central/", 500)));
+        clientOf(fetcher).fetchSpectrum(USI);
+        assertEquals(1, fetcher.requests.size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {400, 404})
+    void spectrumDefinitiveAnswerOfPrideIsNotRetried(int code) {
+        ScriptedFetcher fetcher =
+                new ScriptedFetcher(
+                        Map.of(
+                                "http://h/proxi/", status("http://h/proxi/", code),
+                                "http://h/central/", "[]"));
+        RemoteServiceException e =
+                assertThrows(
+                        RemoteServiceException.class, () -> clientOf(fetcher).fetchSpectrum(USI));
+        assertEquals(code, e.statusCode());
+        assertEquals(1, fetcher.requests.size());
+    }
+
+    @Test
+    void spectrumDefinitiveAnswerOfProteomeCentralIsReported() {
+        ScriptedFetcher fetcher =
+                new ScriptedFetcher(
+                        Map.of(
+                                "http://h/proxi/", status("http://h/proxi/", 500),
+                                "http://h/central/", status("http://h/central/", 404)));
+        RemoteServiceException e =
+                assertThrows(
+                        RemoteServiceException.class, () -> clientOf(fetcher).fetchSpectrum(USI));
+        assertTrue(e.isNotFound());
+    }
+
+    @Test
+    void spectrumReportsUnavailableServicesWhenBothFail() {
+        ScriptedFetcher fetcher =
+                new ScriptedFetcher(
+                        Map.of(
+                                "http://h/proxi/", status("http://h/proxi/", 500),
+                                "http://h/central/", new IOException("timed out")));
+        ServiceUnavailableException e =
+                assertThrows(
+                        ServiceUnavailableException.class,
+                        () -> clientOf(fetcher).fetchSpectrum(USI));
+        assertEquals("PRIDE and ProteomeCentral are not responding", e.getMessage());
+        assertEquals(2, e.getSuppressed().length);
+    }
+
+    @Test
+    void spectrumWithoutFallbackReportsTheFailureOfPride() {
+        ScriptedFetcher fetcher =
+                new ScriptedFetcher(Map.of("http://h/proxi/", status("http://h/proxi/", 500)));
+        PrideClient client = new PrideClient(fetcher, ARCHIVE, PROXI);
+        assertThrows(RemoteServiceException.class, () -> client.fetchSpectrum(USI));
+        assertEquals(1, fetcher.requests.size());
+    }
+
+    @Test
+    void spectrumInterruptionIsNotRetried() {
+        ScriptedFetcher fetcher =
+                new ScriptedFetcher(
+                        Map.of(
+                                "http://h/proxi/", new InterruptedIOException("interrupted"),
+                                "http://h/central/", "[]"));
+        assertThrows(InterruptedIOException.class, () -> clientOf(fetcher).fetchSpectrum(USI));
+        assertEquals(1, fetcher.requests.size());
     }
 
     @ParameterizedTest

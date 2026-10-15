@@ -50,6 +50,7 @@ const EXPLANATIONS: Record<ErrorKind, (m: Messages) => string> = {
   NOT_FOUND: (m) => m.error.remoteNotFound,
   REMOTE: (m) => m.error.remoteStatus,
   NETWORK: (m) => m.error.network,
+  UNAVAILABLE: (m) => m.error.unavailable,
   INVALID_STATE: (m) => m.error.invalidState,
   TOO_LARGE: (m) => m.error.tooLarge,
   UNEXPECTED: (m) => m.error.unexpected,
@@ -66,6 +67,9 @@ export function fromError(e: unknown): StatusMessage {
     return failure((m) => m.error.server);
   }
   const explain = e instanceof ApiError && e.kind ? EXPLANATIONS[e.kind] : EXPLANATIONS.UNEXPECTED;
+  if (e instanceof ApiError && e.kind === 'UNAVAILABLE') {
+    return failure(explain);
+  }
   const detail =
     e instanceof ApiError && e.location
       ? `${e.location}: ${e.message}`

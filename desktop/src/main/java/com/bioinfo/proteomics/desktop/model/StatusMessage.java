@@ -17,6 +17,7 @@
 package com.bioinfo.proteomics.desktop.model;
 
 import com.bioinfo.proteomics.client.RemoteServiceException;
+import com.bioinfo.proteomics.client.ServiceUnavailableException;
 import com.bioinfo.proteomics.desktop.i18n.Messages;
 import com.bioinfo.proteomics.parser.ParsingException;
 
@@ -56,6 +57,9 @@ public record StatusMessage(String key, Object[] args, boolean error, String det
      * detail.
      */
     public static StatusMessage fromException(Exception e) {
+        if (e instanceof ServiceUnavailableException) {
+            return error("error.unavailable");
+        }
         String detail = e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
         String key =
                 switch (e) {

@@ -193,6 +193,7 @@ export type ErrorKind =
   | 'NOT_FOUND'
   | 'REMOTE'
   | 'NETWORK'
+  | 'UNAVAILABLE'
   | 'INVALID_STATE'
   | 'TOO_LARGE'
   | 'UNEXPECTED';

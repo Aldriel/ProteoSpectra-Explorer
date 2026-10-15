@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bioinfo.proteomics.client.RemoteServiceException;
+import com.bioinfo.proteomics.client.ServiceUnavailableException;
 import com.bioinfo.proteomics.desktop.i18n.Messages;
 import com.bioinfo.proteomics.parser.ParsingException;
 
@@ -50,6 +51,7 @@ class StatusMessageTest {
                 Arguments.of(
                         new RemoteServiceException(REMOTE_URI, 500, null), "error.remote.status"),
                 Arguments.of(new IOException("connection reset"), "error.network"),
+                Arguments.of(new ServiceUnavailableException("down"), "error.unavailable"),
                 Arguments.of(new ParsingException("/0", "bad json"), "error.parsing"),
                 Arguments.of(new IllegalArgumentException("bad input"), "error.invalidInput"),
                 Arguments.of(new IllegalStateException("bad state"), "error.invalidState"),
@@ -87,6 +89,19 @@ class StatusMessageTest {
                 "Erreur : accession introuvable (HTTP 404 from https://example.org/x: gone)",
                 StatusMessage.fromException(new RemoteServiceException(REMOTE_URI, 404, "gone"))
                         .render(FR));
+    }
+
+    @Test
+    void unavailableServicesAskToTryAgainLater() {
+        StatusMessage status =
+                StatusMessage.fromException(
+                        new ServiceUnavailableException("PRIDE and ProteomeCentral are down"));
+        assertEquals(
+                "Error: PRIDE and ProteomeCentral are not responding, try again later",
+                status.render(EN));
+        assertEquals(
+                "Erreur : PRIDE et ProteomeCentral ne répondent pas, réessayez plus tard",
+                status.render(FR));
     }
 
     @Test

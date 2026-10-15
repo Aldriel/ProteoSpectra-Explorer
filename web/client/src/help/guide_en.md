@@ -262,7 +262,7 @@ mzspec:PXD000561:Adult_Frontalcortex_bRP_Elite_85_f09:scan:17555:VLHPLEGAVVIIFK/
 | # | Element | Description |
 |---|---|---|
 | 1 | PRIDE USI | Identifier of the spectrum. The end, `VLHPLEGAVVIIFK/2`, is the identified peptide and its charge. |
-| 2 | Download | Fetches the spectrum through the PRIDE PROXI API. |
+| 2 | Download | Fetches the spectrum through the PRIDE PROXI API, or through ProteomeCentral when PRIDE does not answer. |
 | 3 | Details | 564 peaks, precursor 767.9739 (2+); the theoretical value is 767.9714, a 3.3 ppm difference. |
 | 4 | Chart | After **Annotate**: 23 peaks explained, i.e. 88% of the theoretical b/y ions. |
 | 5 | Annotations | Mass errors all below 2 ppm. |

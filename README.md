@@ -191,6 +191,8 @@ possible, `location`) :
 - **409** : opération impossible dans l'état actuel (`INVALID_STATE`).
 - **413** : corps JSON supérieur à 10 Mo, ou fichier envoyé supérieur à 1 Go (`TOO_LARGE`).
 - **502** : service distant (UniProt ou PRIDE) indisponible.
+- **503** : ni PRIDE ni ProteomeCentral ne répondent pour un spectre (`UNAVAILABLE`) ; l'interface
+  demande de réessayer plus tard.
 
 ## Licence
 

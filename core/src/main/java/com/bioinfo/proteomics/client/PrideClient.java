@@ -26,6 +26,7 @@ import com.bioinfo.proteomics.parser.PrideProjectParser;
 import com.bioinfo.proteomics.parser.SpectrumJsonParser;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +37,8 @@ import java.util.regex.Pattern;
 
 /**
  * Client for the PRIDE Archive API (project search, metadata and files) and its PROXI endpoint
- * (spectra by USI).
+ * (spectra by USI). When PRIDE fails to serve a spectrum, the same PROXI request is sent to
+ * ProteomeCentral, which resolves the USI of every ProteomeXchange resource, PRIDE included.
  */
 public final class PrideClient {
 
@@ -48,6 +50,10 @@ public final class PrideClient {
     public static final URI DEFAULT_PROXI_URI =
             URI.create("https://www.ebi.ac.uk/pride/proxi/archive/v0.1/");
 
+    /** Base address of the PROXI API of ProteomeCentral, used when PRIDE does not answer. */
+    public static final URI DEFAULT_FALLBACK_PROXI_URI =
+            URI.create("https://proteomecentral.proteomexchange.org/api/proxi/v0.1/");
+
     /** Largest page of search results that PRIDE serves. */
     public static final int MAX_PAGE_SIZE = 100;
 
@@ -56,17 +62,31 @@ public final class PrideClient {
     private final HttpFetcher fetcher;
     private final URI archiveUri;
     private final URI proxiUri;
+    private final URI fallbackProxiUri;
     private final PrideProjectParser projectParser = new PrideProjectParser();
     private final PrideFileParser fileParser = new PrideFileParser();
     private final SpectrumJsonParser spectrumParser = new SpectrumJsonParser(ParseMode.LENIENT);
 
     /**
-     * Creates a client of the public PRIDE services.
+     * Creates a client of the public PRIDE services, with ProteomeCentral as the fallback for
+     * spectra.
      *
      * @param fetcher performs the HTTP requests
      */
     public PrideClient(HttpFetcher fetcher) {
-        this(fetcher, DEFAULT_ARCHIVE_URI, DEFAULT_PROXI_URI);
+        this(fetcher, DEFAULT_ARCHIVE_URI, DEFAULT_PROXI_URI, DEFAULT_FALLBACK_PROXI_URI);
+    }
+
+    /**
+     * Creates a client of PRIDE services at the given addresses, without fallback for spectra
+     * (used by the tests).
+     *
+     * @param fetcher performs the HTTP requests
+     * @param archiveUri base address of the Archive API, ending with a slash
+     * @param proxiUri base address of the PROXI API, ending with a slash
+     */
+    public PrideClient(HttpFetcher fetcher, URI archiveUri, URI proxiUri) {
+        this(fetcher, archiveUri, proxiUri, null);
     }
 
     /**
@@ -75,11 +95,14 @@ public final class PrideClient {
      * @param fetcher performs the HTTP requests
      * @param archiveUri base address of the Archive API, ending with a slash
      * @param proxiUri base address of the PROXI API, ending with a slash
+     * @param fallbackProxiUri base address of the PROXI API asked when {@code proxiUri} does not
+     *     answer, ending with a slash; {@code null} for none
      */
-    public PrideClient(HttpFetcher fetcher, URI archiveUri, URI proxiUri) {
+    public PrideClient(HttpFetcher fetcher, URI archiveUri, URI proxiUri, URI fallbackProxiUri) {
         this.fetcher = Objects.requireNonNull(fetcher, "fetcher");
         this.archiveUri = Objects.requireNonNull(archiveUri, "archiveUri");
         this.proxiUri = Objects.requireNonNull(proxiUri, "proxiUri");
+        this.fallbackProxiUri = fallbackProxiUri;
     }
 
     /**
@@ -161,11 +184,15 @@ public final class PrideClient {
 
     /**
      * Fetches the spectrum identified by a Universal Spectrum Identifier ({@code mzspec:...}).
+     * PRIDE is asked first; if it is down, too slow or fails with a server error, the request is
+     * sent to ProteomeCentral. A definitive answer, such as an unknown USI, is not retried
+     * elsewhere.
      *
      * @param usi identifier of the spectrum
      * @return the spectrum, with the problems found while reading it
      * @throws IllegalArgumentException if the USI is malformed
-     * @throws IOException if PRIDE cannot be reached or answers with an error
+     * @throws ServiceUnavailableException if neither PRIDE nor ProteomeCentral answers
+     * @throws IOException if a service answers with an error
      */
     public ParseResult<Spectrum> fetchSpectrum(String usi) throws IOException {
         if (usi == null
@@ -180,6 +207,43 @@ public final class PrideClient {
         String query =
                 "spectra?resultType=full&usi="
                         + URLEncoder.encode(usi.strip(), StandardCharsets.UTF_8);
-        return spectrumParser.parse(fetcher.get(proxiUri.resolve(query)));
+        try {
+            return spectrumParser.parse(fetcher.get(proxiUri.resolve(query)));
+        } catch (IOException primary) {
+            if (fallbackProxiUri == null || !isServiceFailure(primary)) {
+                throw primary;
+            }
+            return fetchSpectrumFallback(query, primary);
+        }
+    }
+
+    private ParseResult<Spectrum> fetchSpectrumFallback(String query, IOException primary)
+            throws IOException {
+        try {
+            return spectrumParser.parse(fetcher.get(fallbackProxiUri.resolve(query)));
+        } catch (IOException secondary) {
+            if (!isServiceFailure(secondary)) {
+                throw secondary;
+            }
+            ServiceUnavailableException unavailable =
+                    new ServiceUnavailableException("PRIDE and ProteomeCentral are not responding");
+            unavailable.addSuppressed(primary);
+            unavailable.addSuppressed(secondary);
+            throw unavailable;
+        }
+    }
+
+    /**
+     * Tells whether a service failed to answer, as opposed to answering that the request is wrong
+     * or the resource unknown: network errors, timeouts, HTTP 429 and server errors.
+     */
+    private static boolean isServiceFailure(IOException e) {
+        if (e instanceof InterruptedIOException) {
+            return false;
+        }
+        if (e instanceof RemoteServiceException remote) {
+            return remote.statusCode() == 429 || remote.statusCode() >= 500;
+        }
+        return true;
     }
 }

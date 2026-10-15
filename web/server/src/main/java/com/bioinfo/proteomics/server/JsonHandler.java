@@ -17,6 +17,7 @@
 package com.bioinfo.proteomics.server;
 
 import com.bioinfo.proteomics.client.RemoteServiceException;
+import com.bioinfo.proteomics.client.ServiceUnavailableException;
 import com.bioinfo.proteomics.parser.JsonSupport;
 import com.bioinfo.proteomics.parser.ParsingException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -70,6 +71,8 @@ public abstract class JsonHandler implements HttpHandler {
         REMOTE,
         /** The remote service cannot be reached. */
         NETWORK,
+        /** Every remote service able to answer is down: the user should try again later. */
+        UNAVAILABLE,
         /** The operation is not possible in the current state. */
         INVALID_STATE,
         /** The uploaded file or the request body is too large. */
@@ -313,6 +316,7 @@ public abstract class JsonHandler implements HttpHandler {
      *   <li>400 for invalid input ({@link ParsingException}, {@link IllegalArgumentException});
      *   <li>404 when the remote service does not know the requested resource;
      *   <li>413 when an uploaded file is too large;
+     *   <li>503 when every remote service able to answer is down;
      *   <li>502 when the remote service is unreachable or fails;
      *   <li>500 for any other error.
      * </ul>
@@ -332,6 +336,8 @@ public abstract class JsonHandler implements HttpHandler {
                     new Failure(404, Kind.NOT_FOUND, "Resource not found on remote service", null);
             case RemoteServiceException remote ->
                     new Failure(502, Kind.REMOTE, remote.getMessage(), null);
+            case ServiceUnavailableException unavailable ->
+                    new Failure(503, Kind.UNAVAILABLE, unavailable.getMessage(), null);
             case BodyTooLargeException tooLarge ->
                     new Failure(413, Kind.TOO_LARGE, tooLarge.getMessage(), null);
             case IOException io ->

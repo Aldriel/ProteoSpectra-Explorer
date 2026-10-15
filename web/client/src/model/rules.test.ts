@@ -134,6 +134,12 @@ describe('fromError', () => {
     expect(message.render(en)).toContain('/spectra/0: bad mz');
   });
 
+  it('asks to try again later when PRIDE and ProteomeCentral do not answer', () => {
+    const error = new ApiError('PRIDE and ProteomeCentral are not responding', 503, 'UNAVAILABLE');
+    expect(fromError(error).render(fr)).toBe(`Erreur : ${fr.error.unavailable}`);
+    expect(fromError(error).render(en)).toBe(`Error: ${en.error.unavailable}`);
+  });
+
   it('reports an unreachable server', () => {
     expect(fromError(new ApiError('', 0, null)).render(fr)).toContain(fr.error.server);
   });

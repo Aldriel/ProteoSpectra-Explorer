@@ -413,6 +413,7 @@ export const fr = {
     remoteNotFound: 'accession introuvable',
     remoteStatus: 'le service distant a renvoyé une erreur',
     network: 'service injoignable, vérifiez votre connexion Internet',
+    unavailable: 'PRIDE et ProteomeCentral ne répondent pas, réessayez plus tard',
     parsing: 'données invalides',
     invalidInput: 'saisie invalide',
     invalidState: 'opération impossible',

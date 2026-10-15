@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bioinfo.proteomics.client.FileDownloader;
 import com.bioinfo.proteomics.client.PrideClient;
 import com.bioinfo.proteomics.client.RemoteServiceException;
+import com.bioinfo.proteomics.client.ServiceUnavailableException;
 import com.bioinfo.proteomics.client.UniProtClient;
 import com.bioinfo.proteomics.parser.JsonSupport;
 import com.bioinfo.proteomics.service.ProteomicsService;
@@ -444,6 +445,10 @@ class ApiServerTest {
         assertEquals(JsonHandler.Kind.REMOTE, kind(new RemoteServiceException(uri("/"), 500, "")));
         assertEquals(
                 404, JsonHandler.describe(new RemoteServiceException(uri("/"), 404, "")).status());
+        JsonHandler.Failure unavailable =
+                JsonHandler.describe(new ServiceUnavailableException("PRIDE is down"));
+        assertEquals(503, unavailable.status());
+        assertEquals(JsonHandler.Kind.UNAVAILABLE, unavailable.kind());
     }
 
     private static JsonHandler.Kind kind(Exception e) {

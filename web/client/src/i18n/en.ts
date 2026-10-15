@@ -384,6 +384,7 @@ export const en: Messages = {
     remoteNotFound: 'accession not found',
     remoteStatus: 'the remote service returned an error',
     network: 'service unreachable, check your Internet connection',
+    unavailable: 'PRIDE and ProteomeCentral are not responding, try again later',
     parsing: 'invalid data',
     invalidInput: 'invalid input',
     invalidState: 'operation not possible',
